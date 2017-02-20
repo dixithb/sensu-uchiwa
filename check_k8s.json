@@ -1,0 +1,34 @@
+{
+  "checks": {
+    "check-kube-service-available": {
+      "command": "check-kube-service-available.rb --in-cluster -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT} -l redis,rabbitmq,sensu,kube-dns,kubernetes-dashboard,kubernetes",
+      "interval": 10,
+      "standalone": true,
+      "subscribers": [ "all" ]
+    },
+    "check-kube-pods-runtime": {
+      "command": "check-kube-pods-runtime.rb --in-cluster -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}",
+      "interval": 10,
+      "standalone": true,
+      "subscribers": [ "all" ]
+    },
+    "check-kube-pods-pending": {
+      "command": "check-kube-pods-pending.rb --in-cluster -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}",
+      "interval": 10,
+      "standalone": true,
+      "subscribers": [ "all" ]
+    },
+    "check-kube-nodes-ready": {
+      "command": "check-kube-nodes-ready.rb --in-cluster -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}",
+      "interval": 10,
+      "standalone": true,
+      "subscribers": [ "all" ]
+    },
+    "check-kube-apiserver-available": {
+      "command": "check-kube-apiserver-available.rb --in-cluster -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}",
+      "interval": 10,
+      "standalone": true,
+      "subscribers": [ "all" ]
+    }
+  }
+}

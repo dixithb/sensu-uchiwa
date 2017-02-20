@@ -1,0 +1,112 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sensu
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: sensu
+        track: dev
+    spec:
+      containers:
+        - name: sensu-server
+          image: moss2k13/sensu-uchiwa
+          args:
+          - server
+          env:
+          - name: RABBITMQ_DEFAULT_USER
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_DEFAULT_USER
+          - name: RABBITMQ_DEFAULT_PASS
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_DEFAULT_PASS
+          - name: RABBITMQ_DEFAULT_VHOST
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_DEFAULT_VHOST
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        - name: sensu-api
+          image: moss2k13/sensu-uchiwa
+          args:
+          - api
+          ports:
+          - containerPort: 4567
+          env:
+          - name: RABBITMQ_DEFAULT_USER
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_DEFAULT_USER
+          - name: RABBITMQ_DEFAULT_PASS
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_DEFAULT_PASS
+          - name: RABBITMQ_DEFAULT_VHOST
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_DEFAULT_VHOST
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        - name: sensu-client
+          image: moss2k13/sensu-uchiwa
+          args:
+          - client
+          ports:
+          - containerPort: 3030
+          env:
+          - name: RABBITMQ_DEFAULT_USER
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_DEFAULT_USER
+          - name: RABBITMQ_DEFAULT_PASS
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_DEFAULT_PASS
+          - name: RABBITMQ_DEFAULT_VHOST
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_DEFAULT_VHOST
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: SENSU_CLIENT_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: SENSU_CLIENT_ADDRESS
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: SENSU_CLIENT_SUBSCRIPTIONS
+            value: all
+        - name: uchiwa
+          image: moss2k13/sensu-uchiwa
+          args:
+          - uchiwa
+          ports:
+          - containerPort: 3000
+          env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace

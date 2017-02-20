@@ -1,0 +1,38 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: redis
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 16Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: redis
+        track: dev
+    spec:
+      containers:
+      - name: "redis"
+        image: "redis:alpine"
+        command: ['redis-server', '--appendonly', 'yes']
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - mountPath: "/data"
+          name: redis
+      volumes:
+        - name: redis
+          persistentVolumeClaim:
+            claimName: redis
