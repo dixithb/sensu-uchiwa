@@ -8,7 +8,7 @@ Based on:
 ## Status
 
 Ready for testing. Verified with below versions:
-- kubernetes > 1.5.0
+- kubernetes > 1.5.0 (no RBAC support)
 - redis 3.2.6
 - rabbitmq 3.6.6
 - erlang 19.2
@@ -17,7 +17,7 @@ Ready for testing. Verified with below versions:
 
 ## Architecture
 
-![sensu-uchiwa](https://www.gliffy.com/go/share/image/s4ogmb3tv2ldglqba7eg.png?utm_medium=live-embed&utm_source=custom)
+https://go.gliffy.com/go/publish/11814882
 
 ## Prepare
 
@@ -33,8 +33,9 @@ Credentials:
 ## Deploy
 
 ```
-for yaml in kubernetes/*.yaml;do kubectl create -f $yaml;done
+kubectl create -f kubernetes
 ```
 ## ToDo
 
 - switch to alpine based sensu container after [#1201](https://github.com/sensu/sensu/issues/1201)
+- add RBAC support
