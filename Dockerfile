@@ -14,7 +14,7 @@ RUN useradd sensu \
  && sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config \
  && echo "sensu ALL=(ALL) ALL" >> /etc/sudoers.d/sensu
  
- ADD sensu.repo /etc/yum.repos.d/
+ COPY sensu.repo /etc/yum.repos.d/
  RUN yum install -y sensu uchiwa
 
 RUN cd /opt/sensu/embedded/bin \
