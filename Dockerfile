@@ -1,31 +1,32 @@
-FROM debian:jessie
-MAINTAINER moss2k13 <moss2k03@yahoo.com>
+FROM oraclelinux
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install -y --no-install-recommends \
-      # Requires by check-memory-percent
-      bc \
-      build-essential \
-      ca-certificates \
-      curl && \
-    curl -L 'http://repos.sensuapp.org/apt/pubkey.gpg' | apt-key add - && \
-    echo 'deb http://repos.sensuapp.org/apt sensu main' > /etc/apt/sources.list.d/sensu.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-      sensu uchiwa && \
-    /opt/sensu/embedded/bin/gem install --no-rdoc \
-      sensu-plugins-cpu-checks \
-      sensu-plugins-disk-checks \
-      sensu-plugins-memory-checks:1.0.2\
-      sensu-plugins-network-checks \
-      sensu-plugins-kubernetes \
-      sensu-plugins-mailer && \
-    apt-get purge -y \
-      build-essential \
-      ca-certificates \
-      curl && \
-    apt-get autoremove -y && \
-    apt-get clean && \
+MAINTAINER Dixith dixithbura@gmail.com
+
+# Basic packages
+RUN yum update -y
+RUN rpm -Uvh http://download.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm \
+  && yum -y install passwd sudo git curl vim wget openssl openssh openssh-server openssh-clients jq
+
+# Create user
+RUN useradd sensu \
+ && echo "sensu" | passwd sensu --stdin \
+ && sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config \
+ && sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config \
+ && echo "sensu ALL=(ALL) ALL" >> /etc/sudoers.d/sensu
+ 
+ ADD sensu.repo /etc/yum.repos.d/
+ RUN yum install -y sensu uchiwa
+
+RUN cd /opt/sensu/embedded/bin \
+ && sensu-install -p cpu-checks  
+ && sensu-install -p disk-checks \
+ && sensu-install -p memory-checks \
+ && sensu-install -p nginx \
+ && sensu-install -p process-checks \  
+ && sensu-install -p load-checks \  
+ && sensu-install -p vmstats \  
+ && sensu-install -p mailer 
+
     rm -rvf \
       /tmp/* \
       /var/lib/apt/lists/* \
