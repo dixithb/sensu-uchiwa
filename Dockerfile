@@ -4,8 +4,8 @@ MAINTAINER Dixith dixithbura@gmail.com
 
 # Basic packages
 RUN yum update -y
-RUN rpm -Uvh http://download.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm \
-  && yum -y install passwd sudo git curl vim wget openssl openssh openssh-server openssh-clients jq
+RUN rpm -Uvh http://del-mirrors.extreme-ix.org/epel//epel-release-latest-7.noarch.rpm \
+ && yum -y install erlang passwd sudo git curl vim wget openssl openssh openssh-server openssh-clients jq
 
 # Create user
 RUN useradd sensu \
