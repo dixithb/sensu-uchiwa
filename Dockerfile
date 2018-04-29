@@ -38,4 +38,4 @@ COPY check_k8s.json /etc/sensu/conf.d
 COPY uchiwa.json /etc/sensu
 COPY entrypoint.sh /
 
-ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh" "server","api","client","uchiwa"]
